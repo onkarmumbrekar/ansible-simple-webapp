@@ -1,0 +1,10 @@
+- name: Install required Python libraries
+  shell: pip3 install flask flask-mysql
+
+- name: Copy webserver source
+  copy:
+    src: app.py
+    dest: /opt/app.py
+
+- name: Start the webserver
+  shell: FLASK_APP=/opt/app.py nohup flask run --host=0.0.0.0 &

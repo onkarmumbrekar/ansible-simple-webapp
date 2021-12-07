@@ -1,0 +1,38 @@
+  - name: Install MySQL community repository
+    yum:
+      name: "http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm"
+      state: present
+
+
+  - name: Install MySQL
+    yum: 
+      name: ['mysql-server', 'mysql-devel','MySQL-python']
+      state: present
+
+  
+  - name: create MySQL configuration file
+    copy:
+      content: |
+        [client]
+        user=root
+        password="@targ8et"
+      dest: "/etc/.my.cnf"
+
+
+  - name: Start database service
+    service: 
+      name: mysqld
+      state: started
+      enabled: yes
+  
+  - name: Create employee_db database
+    mysql_db:
+      name: employee_db
+      state: present
+
+  - name: Create db_user username
+    mysql_user:
+      name: db_user
+      password: Passw0rd
+      priv: '*.*:ALL'
+      state: present
