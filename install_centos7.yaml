@@ -1,0 +1,68 @@
+---
+- name: Install database and web server
+  hosts: db_and_web_server_1,db_and_web_server_2
+  tasks:
+    - name: Ping test
+      ping:
+    
+    - name: Install all required dependencies
+      yum: 
+        name: ['epel-release', 'python','python3-pip']
+        state: present
+
+      
+
+    - name: Install MySQL community repository
+      yum:
+        name: "http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm"
+        state: present
+
+
+    - name: Install MySQL
+      yum: 
+        name: ['mysql-server', 'mysql-devel','MySQL-python']
+        state: present
+
+    
+    - name: create MySQL configuration file
+      copy:
+        content: |
+          [client]
+          user=root
+          password="@targ8et"
+        dest: "/etc/.my.cnf"
+
+
+    - name: Start database service
+      service: 
+        name: mysqld
+        state: started
+        enabled: yes
+    
+    - name: Create employee_db database
+      mysql_db:
+        name: employee_db
+        state: present
+
+    - name: Create db_user username
+      mysql_user:
+        name: db_user
+        password: Passw0rd
+        priv: '*.*:ALL'
+        state: present
+
+    - name: Install required Python libraries
+      shell: pip3 install flask flask-mysql
+
+    - name: Copy webserver source
+      copy:
+        src: app.py
+        dest: /opt/app.py
+
+    - name: Start the webserver
+      shell: FLASK_APP=/opt/app.py nohup flask run --host=0.0.0.0 &
+
+
+        
+
+ 

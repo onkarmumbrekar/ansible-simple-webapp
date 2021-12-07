@@ -1,0 +1,53 @@
+---
+- name: Install database and web server
+  hosts: db_and_web_server_1,db_and_web_server_2
+  tasks:
+    - name: Ping test
+      ping:
+    
+    - name: Install all required dependencies
+      apt: 
+        name: ['python', 'python-setuptools', 'python-dev', 'build-essential', 'python-pip', 'python-mysqldb']
+        state: present
+    
+    - name: Install mysql database
+      apt:
+        name: ['mysql-server', 'mysql-client']
+        state: present
+     
+    - name: Start database service
+      service: 
+        name: mysql
+        state: started
+        enabled: true
+    
+    - name: Create employee_db database
+      mysql_db:
+        name: employee_db
+        state: present
+
+    - name: Create db_user username
+      mysql_user:
+        name: db_user
+        password: Passw0rd
+        priv: '*.*:ALL'
+        state: present
+
+    - name: Install python flask dependencies
+      pip: 
+        name: ['flask','flask_mysql']
+        state: present
+
+    - name: Copy webserver source
+      copy:
+        src: app.py
+        dest: /opt/app.py
+
+    - name: Start the webserver
+      shell: FLASK_APP=app.py nohup flask run --host=0.0.0.0 &
+        
+
+
+        
+
+ 
