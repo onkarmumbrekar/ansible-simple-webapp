@@ -1,3 +1,5 @@
+---
+# tasks file for deploy-web
 - name: Install required Python libraries
   shell: pip3 install flask flask-mysql
 

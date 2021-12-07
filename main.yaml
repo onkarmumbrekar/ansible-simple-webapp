@@ -1,17 +1,12 @@
 ---
 - name: Install database and web server
   hosts: db_and_web_server_1,db_and_web_server_2
-  tasks:
-    - name: Ping test
-      ping:
-    
-    - name: Install all required dependencies
-      yum: 
-        name: ['epel-release', 'python','python3-pip']
-        state: present
+  roles:
+    - deploy-db
+    - deploy-web
 
-    - include: tasks/deploy-db.yaml
-    - include: tasks/deploy-web.yaml
+
+    
 
     
 
